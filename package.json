@@ -1,0 +1,39 @@
+{
+  "name": "letsplay",
+  "version": "1.0.0",
+  "description": "Application to save your game records with friends",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chhunchha/letsplay.git"
+  },
+  "keywords": [
+    "MEAN",
+    "Angular",
+    "mongo",
+    "Express",
+    "Node",
+    "Generalized for records",
+    "Tennis",
+    "Lets play",
+    "Friendley game records"
+  ],
+  "author": "Sumant Chhunchha (mr.chhunchha@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chhunchha/letsplay/issues"
+  },
+  "homepage": "https://github.com/chhunchha/letsplay#readme",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "body-parser": "^1.15.1",
+    "consolidate": "^0.14.1",
+    "express": "^4.13.4",
+    "mongodb": "^2.1.21",
+    "mongoose": "^4.4.20",
+    "nunjucks": "^2.4.2"
+  }
+}

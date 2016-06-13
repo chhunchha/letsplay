@@ -1,0 +1,262 @@
+<!DOCTYPE>
+<html ng-app="letsplay">
+<head>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="app.css">
+
+    <title>
+        Let's Play
+    </title>
+</head>
+<body ng-controller="tennisCtrl as vm">
+
+    <nav class="navbar navbar-default" >
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Let's Play - Tennis</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li ng-class="vm.tab_index == 0 ? 'active' : ''" ng-click="vm.goToNewGame()"><a href="#">New Match</a></li>
+                    <li ng-class="vm.tab_index == 1 ? 'active' : ''" ng-click="vm.goToRecords()"><a href="#">Past Matches</a></li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+        <div ng-show="vm.tab_index == 0" class="row">
+            <div class="col-md-offset-2 col-md-8 col-sm-offset-1 col-sm-10 col-xs-12">
+                <form name="match_form" novalidate>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <fieldset class="form-group">
+                                <label for="type_of_game">Type</label>
+                                <select class="form-control" ng-model="vm.match.type">
+                                    <option>Singles</option>
+                                    <option>Doubles</option>
+                                </select>
+                            </fieldset>
+                        </div>
+                        <div class="col-xs-6">
+                            <fieldset class="form-group">
+                                <label for="match_date">Date</label>
+                                <input type="date" class="form-control" ng-model="vm.match.date" />
+                            </fieldset>
+                        </div>
+                    </div>
+                    <span ng-show="vm.match.type == 'Singles'">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"> Player 1</div>
+                            <div class="panel-body">
+                                <fieldset>
+                                    <select class="form-control" ng-model="vm.match.team1[0]" required>
+                                        <option></option>
+                                        <option ng-repeat="player in vm.players">{{player}}</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Player 2</div>
+                            <div class="panel-body">
+                                <fieldset>
+                                    <select class="form-control" ng-model="vm.match.team2[0]">
+                                        <option></option>
+                                        <option ng-repeat="player in vm.players">{{player}}</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </span>
+                    <span ng-show="vm.match.type == 'Doubles'">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Team 1
+                            </div>
+                            <div class="panel-body">
+                                <fieldset class="col-xs-6">
+                                    <label for="team1_plyear1"> Player 1</label>
+                                    <select class="form-control" ng-model="vm.match.team1[0]">
+                                        <option ng-repeat="player in vm.players">{{player}}</option>
+                                    </select>
+                                </fieldset>
+                                <fieldset class="col-xs-6">
+                                    <label for="team1_player2"> Player 2</label>
+                                    <select class="form-control" ng-model="vm.match.team1[1]">
+                                        <option ng-repeat="player in vm.players">{{player}}</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Team 2
+                            </div>
+                            <div class="panel-body">
+                                <fieldset class="col-xs-6">
+                                    <label for="team2_plyear1"> Player 1:</label>
+                                    <select class="form-control" ng-model="vm.match.team2[0]">
+                                        <option ng-repeat="player in vm.players">{{player}}</option>
+                                    </select>
+                                </fieldset>
+                                <fieldset class="col-xs-6">
+                                    <label for="team2_player2"> Player 2:</label>
+                                    <select class="form-control" ng-model="vm.match.team2[1]">
+                                        <option ng-repeat="player in vm.players">{{player}}</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </span>
+                    <fieldset>
+                        <label for="noOfSets">
+                            How many sets?
+                        </label>
+                        <input type="number" class="form-control" ng-model="vm.match.no_of_sets" min="1" style="width: 60px;"></input>
+                    </fieldset>
+                    <div class="panel panel-default" ng-if="vm.match.no_of_sets > 0 && vm.match.team1 && vm.match.team2">
+                        <div class="panel-heading">
+                            Scroe Sheet
+                        </div>
+                        <div class="panel-body score-sheet">
+                            <table>
+                                <thead>
+                                    <tr class="border-bottom">
+                                        <th class="text-align-center"> Player / Set </th>
+                                        <th class="text-align-center" ng-repeat="i in vm.getNumber(vm.match.no_of_sets) track by $index">{{$index + 1}}</th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td>
+                                        <span>{{vm.match.team1.join(' & ') === "" ? (vm.match.type=="Singles" ? 'Player 1' : 'Team 1')
+                                            : vm.match.team1.join(' & ')}}</span>
+                                    </td>
+                                    <td ng-repeat="i in vm.getNumber(vm.match.no_of_sets) track by $index">
+                                        <input type="number" ng-model="vm.match.score[$index].team1" class="game-score-input form-control" ng-change="vm.decide_winner()" min="0">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span>{{vm.match.team2.join(' & ') === "" ? (vm.match.type=="Singles" ? 'Player 2' : 'Team 2')
+                                            : vm.match.team2.join(' & ')}}</span>
+                                    </td>
+                                    <td ng-repeat="i in vm.getNumber(vm.match.no_of_sets) track by $index">
+                                        <input type="number" ng-model="vm.match.score[$index].team2" class="game-score-input form-control"  ng-change="vm.decide_winner()" min="0">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        Winner : <strong> {{vm.match.winner.join(' & ')}}</strong>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="float: right" ng-click="vm.save_match()"> Save</button>
+                    <button type="submit" class="btn btn-danger" style="float: right; margin-right: 10px;" ng-click="vm.cancel()"> Cancel</button>
+                </form>
+            </div>
+        </div>
+        <div ng-show="vm.tab_index == 1" class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">Matches</div>
+                    <div class="panel-body">
+                        <fieldset class="inline-block margin-right-10">
+                            <label>Type</label>
+                            <select class="form-control" ng-model="vm.search.type">
+                                <option>All</option>
+                                <option>Singles</option>
+                                <option>Doubles</option>
+                            </select>
+                        </fieldset>
+                        <span ng-if="vm.search.type != undefined && vm.search.type != ''">
+                            <fieldset  class="inline-block margin-right-10">
+                                <label>Player</label>
+                                <select class="form-control" ng-model="vm.search.team1[0]" >
+                                    <option ng-repeat="player in vm.players">{{player}}</option>
+                                </select>
+                            </fieldset>
+                            <fieldset  ng-if="vm.search.type=='Doubles'" class="inline-block margin-right-10">
+                                <label>Player</label>
+                                <select class="form-control" ng-model="vm.search.team1[1]" >
+                                    <option ng-repeat="player in vm.players">{{player}}</option>
+                                </select>
+                            </fieldset>
+                            <label>Vs</label>
+                            <fieldset  class="inline-block margin-right-10">
+                                <label>Player</label>
+                                <select class="form-control" ng-model="vm.search.team2[0]" >
+                                    <option ng-repeat="player in vm.players">{{player}}</option>
+                                </select>
+                            </fieldset>
+                            <fieldset  ng-if="vm.search.type=='Doubles'" class="inline-block">
+                                <label>Player</label>
+                                <select class="form-control" ng-model="vm.search.team2.player2" >
+                                    <option ng-repeat="player in vm.players">{{player}}</option>
+                                </select>
+                            </fieldset>
+                        </span>
+                        <fieldset class="inline-block margin-right-10">
+                            <button class="btn btn-primary" ng-click="vm.getMatches()">Apply</button>
+                            <button class="btn btn-danger" ng-click="vm.clearFilter()">Clear</button>
+                        </fieldset>
+                    </div>
+                    <!-- <div ng-show="search" class="col-md-6" style="border: 1px solid;">
+                        <nvd3 options='options' data='chartData'></nvd3>
+                    </div> -->
+                    <!-- Table -->
+                    <table class="table">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <!-- <th colspan="2" style="text-align:center">Versus</th> -->
+                            <th>Team1/Player1</th>
+                            <th>Team2/Player2</th>
+                            <th>Score</th>
+                            <th>Winner</th>
+                        </tr> {{search}}
+                        <tr ng-repeat="match in vm.matches | orderBy: '-date'">
+                            <td>{{match.date | date: "MM/dd/yyyy"}}</td>
+                            <td>{{match.type}}</td>
+                            <td>{{match.team1[0]}} <span ng-if="match.type=='Doubles'"> & {{match.team1[1]}}</span></td>
+                            <td>{{match.team2[0]}} <span ng-if="match.type=='Doubles'"> & {{match.team2[1]}}</span></td>
+                            <td> <span ng-repeat="games in vm.getNumber(match.no_of_sets) track by $index"><span ng-if="$index !=0">, </span>{{match.score[$index].team1}}-{{match.score[$index].team2}}</span>
+                            </td>
+                            <td>{{match.winner.join(' & ')}}</td>
+                            <!-- <td ng-if="match.type=='Doubles'">{{match.winner[0]}} & {{match.winner[1]}}</td> -->
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul>
+        ToDo:
+        <li>order by records</li>
+        <li>draw </li>
+        <li>tie breaker</li>
+        <li>filter</li>
+        <li>charts for vs</li>
+    </ul>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
